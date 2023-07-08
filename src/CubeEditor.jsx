@@ -1,22 +1,49 @@
 import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Box } from '@react-three/drei';
-import { OrbitControls } from '@react-three/drei'
+import { Scene } from './Scene';
 
-function CubeEditor() {
-  const [selectedCube, setSelectedCube] = useState(null);
+const CubeEditor = () => {
+  const [selectedCube, setSelectedCube] = useState({
+    rotation: [0, 0, 0],
+    scale: [1.5, 1.5, 1.5],
+    position: [0, 0, 0]
+  });
 
-  const handleCubeClick = (event) => {
-    // console.log('handleCubeClick', event);
-    setSelectedCube(event?.object || true);
-  };
+  const EditorPanel = ({ selectedCube }) => {
+    const handleRotationChange = (event) => {
+      setSelectedCube({...selectedCube, rotation : [event.target.value, event.target.value, event.target.value]})
+    };
+  
+    const handleScaleChange = (event) => {
+      setSelectedCube({...selectedCube, scale : [event.target.value, event.target.value, event.target.value]})
+    };
+  
+    const handleTranslationChange = (event) => {
+      setSelectedCube({...selectedCube, position : [event.target.value, event.target.value, event.target.value]})
+    };
+  
+    return (
+      <div style={{ position: 'absolute', top: '10px', left: '10px', background: 'white', padding: '10px' }}>
+        <h2>Editor Panel</h2>
+        <label>
+          Rotation:
+          <input type="range" min={0} max={Math.PI * 2} step={0.1} value={selectedCube?.rotation?.[0]} onChange={handleRotationChange} />
+        </label>
+        <label>
+          Scale:
+          <input type="range" min={0.1} max={2} step={0.1} value={selectedCube?.scale?.[0]} onChange={handleScaleChange} />
+        </label>
+        <label>
+          Position:
+          <input type="range" min={-2} max={2} step={0.1} value={selectedCube?.position?.[0]} onChange={handleTranslationChange} />
+        </label>
+      </div>
+    );
+  }
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Canvas
-        camera={{ position: [0, 0, 5] }}
-        onClick={handleCubeClick}
-      >
+      <Canvas camera={{ position: [0, 0, 5] }}>
         <Scene selectedCube={selectedCube} />
       </Canvas>
       {selectedCube && (
@@ -24,49 +51,6 @@ function CubeEditor() {
       )}
     </div>
   );
-}
-
-function Scene({ selectedCube }) {
-  return (
-    <>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      <OrbitControls />
-      <Box position={[0, 0, 0]} scale={selectedCube?.scale} rotation={selectedCube?.rotation} />
-    </>
-  );
-}
-
-function EditorPanel({ selectedCube }) {
-  const handleRotationChange = (event) => {
-    selectedCube?.rotation?.set(event.target.value, 0, 0);
-  };
-
-  const handleScaleChange = (event) => {
-    selectedCube?.scale?.set(event.target.value, event.target.value, event.target.value);
-  };
-
-  const handleTranslationChange = (event) => {
-    selectedCube?.position?.set(event.target.value, event.target.value, event.target.value);
-  };
-
-  return (
-    <div style={{ position: 'absolute', top: '10px', left: '10px', background: 'white', padding: '10px' }}>
-      <h2>Editor Panel</h2>
-      <label>
-        Rotation:
-        <input type="range" min={0} max={Math.PI * 2} step={0.1} value={selectedCube?.rotation?.x} onChange={handleRotationChange} />
-      </label>
-      <label>
-        Scale:
-        <input type="range" min={0.1} max={2} step={0.1} value={selectedCube?.scale?.x} onChange={handleScaleChange} />
-      </label>
-      <label>
-        Translation:
-        <input type="range" min={-2} max={2} step={0.1} value={selectedCube?.position?.x} onChange={handleTranslationChange} />
-      </label>
-    </div>
-  );
-}
+};
 
 export default CubeEditor;
