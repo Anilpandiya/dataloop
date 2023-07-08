@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box } from '@react-three/drei';
-import { OrbitControls } from '@react-three/drei'
+import { Box, OrbitControls } from '@react-three/drei';
 
 export const Scene = ({ selectedCube }) => {
   return (
@@ -8,7 +7,7 @@ export const Scene = ({ selectedCube }) => {
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
       <OrbitControls />
-      <Box position={selectedCube?.position} scale={selectedCube?.scale} rotation={selectedCube?.rotation} />
+      <Box material-color="orange" position={selectedCube?.position} scale={selectedCube?.scale} rotation={selectedCube?.rotation} />
     </>
   );
 }

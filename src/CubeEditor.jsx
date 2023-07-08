@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
+import { Environment } from '@react-three/drei';
 import { Scene } from './Scene';
 
 const CubeEditor = () => {
@@ -11,17 +12,17 @@ const CubeEditor = () => {
 
   const EditorPanel = ({ selectedCube }) => {
     const handleRotationChange = (event) => {
-      setSelectedCube({...selectedCube, rotation : [event.target.value, event.target.value, event.target.value]})
+      setSelectedCube({ ...selectedCube, rotation: [event.target.value, event.target.value, event.target.value] })
     };
-  
+
     const handleScaleChange = (event) => {
-      setSelectedCube({...selectedCube, scale : [event.target.value, event.target.value, event.target.value]})
+      setSelectedCube({ ...selectedCube, scale: [event.target.value, event.target.value, event.target.value] })
     };
-  
+
     const handleTranslationChange = (event) => {
-      setSelectedCube({...selectedCube, position : [event.target.value, event.target.value, event.target.value]})
+      setSelectedCube({ ...selectedCube, position: [event.target.value, event.target.value, event.target.value] })
     };
-  
+
     return (
       <div style={{ position: 'absolute', top: '10px', left: '10px', background: 'white', padding: '10px' }}>
         <h2>Editor Panel</h2>
@@ -45,6 +46,7 @@ const CubeEditor = () => {
     <div style={{ width: '100vw', height: '100vh' }}>
       <Canvas camera={{ position: [0, 0, 5] }}>
         <Scene selectedCube={selectedCube} />
+        <Environment preset="night" background blur={0.6} />
       </Canvas>
       {selectedCube && (
         <EditorPanel selectedCube={selectedCube} />
