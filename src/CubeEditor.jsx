@@ -10,6 +10,8 @@ const CubeEditor = () => {
     position: [0, 0, 0]
   });
 
+  const [showPanel, setShowPanel] = useState(false);
+
   const EditorPanel = ({ selectedCube }) => {
     const handleRotationChange = (event) => {
       setSelectedCube({ ...selectedCube, rotation: [event.target.value, event.target.value, event.target.value] })
@@ -42,13 +44,15 @@ const CubeEditor = () => {
     );
   }
 
+  const handleCubeClick = () => setShowPanel(true);
+
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Canvas camera={{ position: [0, 0, 5] }}>
+      <Canvas camera={{ position: [0, 0, 5] }} onClick={handleCubeClick}>
         <Scene selectedCube={selectedCube} />
         <Environment preset="night" background blur={0.6} />
       </Canvas>
-      {selectedCube && (
+      {showPanel && (
         <EditorPanel selectedCube={selectedCube} />
       )}
     </div>
