@@ -1,7 +1,7 @@
 # React 3D Point Cloud Editor
 
 A simple 3D point cloud editor built with React, React Fiber, and the drei library. This project allows you to create, select, and manipulate cubes in a 3D scene using a user-friendly editor panel.
-Deployed here - [Run Live](https://political-sky.surge.sh/)
+Deployed here - [Run Live](https://political-sky.surge.sh/) [camera position](https://well-groomed-things.surge.sh/)
 
 ## Technologies Used
 
