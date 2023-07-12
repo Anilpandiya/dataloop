@@ -1,19 +1,87 @@
-import React, { useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrthographicCamera } from '@react-three/drei';
+import React, { useState, useEffect, useRef } from 'react';
+import { Canvas, useThree, useFrame, extend } from '@react-three/fiber';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { Vector3 } from 'three';
 import { Scene } from './Scene';
+
+// extend({ OrbitControls });
 
 const CubeEditor = () => {
   const [selectedCube, setSelectedCube] = useState({
     rotation: [0, 0, 0],
-    scale: [1.5, 1.5, 1.5],
+    scale: [3.5, 2, 2],
     position: [0, 0, 0]
   });
 
-  const [cameraAngle, setCameraAngle] = useState([1, 1, 1]);
-
   const [showPanel, setShowPanel] = useState(false);
-  const [editorCamera, setEditorCamera] = useState('xy'); // Default camera position
+
+  const handleCanvasClick = () => {
+    setShowPanel(true);
+  };
+
+  // const OrbitControlsWrapper = () => {
+  //   const { camera, gl } = useThree();
+  //   const controlsRef = useRef();
+  //   const zoomSpeed = 0.1;
+
+  //   useFrame(() => controlsRef.current.update());
+
+    // useEffect(() => {
+    //   const handleKeyDown = (event) => {
+    //     if (event.key === 'a') {
+    //       camera.zoom += zoomSpeed;
+    //       camera.updateProjectionMatrix();
+    //     } else if (event.key === 'z') {
+    //       camera.zoom -= zoomSpeed;
+    //       camera.updateProjectionMatrix();
+    //     }
+    //   };
+
+    //   window.addEventListener('keydown', handleKeyDown);
+
+    //   return () => {
+    //     window.removeEventListener('keydown', handleKeyDown);
+    //   };
+    // }, [camera]);
+
+  //   return <orbitControls ref={controlsRef} args={[camera, gl.domElement]} />;
+  // };
+
+  const EditorSceneXY = ({ selectedCube }) => {
+    const { camera } = useThree();
+    camera.position.set(1, 1, -5);
+    camera.lookAt(new Vector3(0, 0, 0));
+
+    return (
+      <>
+        <Scene selectedCube={selectedCube} />
+      </>
+    );
+  };
+
+  const EditorSceneYZ = ({ selectedCube }) => {
+    const { camera } = useThree();
+    camera.position.set(-5, 1, 1);
+    camera.lookAt(new Vector3(0, 0, 0));
+
+    return (
+      <>
+        <Scene selectedCube={selectedCube} />
+      </>
+    );
+  };
+
+  const EditorSceneZX = ({ selectedCube }) => {
+    const { camera } = useThree();
+    camera.position.set(1, -5, 1);
+    camera.lookAt(new Vector3(0, 0, 0));
+
+    return (
+      <>
+        <Scene selectedCube={selectedCube} />
+      </>
+    );
+  };
 
   const EditorPanel = ({ selectedCube }) => {
     const handleRotationChange = (event) => {
@@ -28,21 +96,8 @@ const CubeEditor = () => {
       setSelectedCube({ ...selectedCube, position: [event.target.value, event.target.value, event.target.value] });
     };
 
-    const handleCameraChange = (axis) => {
-      setEditorCamera(axis);
-      if (axis === 'xy') {
-        setCameraAngle([1, 1, 0]);
-      }
-      else if (axis === 'yz') {
-        setCameraAngle([0, 1, 1]);
-      }
-      else if (axis === 'zx') {
-        setCameraAngle([1, 0, 1]);
-      }
-    };
-
     return (
-      <div style={{ position: 'absolute', top: '10px', left: '10px', background: 'white', padding: '10px' }}>
+      <div style={{ position: 'absolute', top: '10px', left: '10px', background: 'white', padding: '10px', background: 'grey' }}>
         <h2>Editor Panel</h2>
         <label>
           Rotation:
@@ -60,7 +115,7 @@ const CubeEditor = () => {
           <input
             type="range"
             min={0.1}
-            max={2}
+            max={8}
             step={0.1}
             value={selectedCube?.scale?.[0]}
             onChange={handleScaleChange}
@@ -77,32 +132,52 @@ const CubeEditor = () => {
             onChange={handleTranslationChange}
           />
         </label>
-        <h3>Camera Position:</h3>
-        <button onClick={() => handleCameraChange('xy')} disabled={editorCamera === 'xy'}>
-          [x, y]
-        </button>
-        <button onClick={() => handleCameraChange('yz')} disabled={editorCamera === 'yz'}>
-          [y, z]
-        </button>
-        <button onClick={() => handleCameraChange('zx')} disabled={editorCamera === 'zx'}>
-          [z, x]
-        </button>
       </div>
     );
   };
 
-  const handleCanvasClick = () => {
-    setShowPanel(true);
-    setCameraAngle([1, 1, 1]);
-  };
-
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <Canvas onClick={handleCanvasClick}>
-        <OrthographicCamera zoom={170} position={cameraAngle} makeDefault />
-        <Scene selectedCube={selectedCube} />
-      </Canvas>
-      {showPanel && <EditorPanel selectedCube={selectedCube} setCameraAngle={setCameraAngle} />}
+    <div style={{ display: 'flex', flexDirection: 'column', marginTop: '209px' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', height: '300px' }}>
+        {showPanel && (
+          <>
+            <div style={{ display: 'flex', width: '50%', background: '#DE4839' }}>
+              <h3>XY</h3>
+              <Canvas>
+                <EditorSceneXY selectedCube={selectedCube} />
+                {/* <OrbitControlsWrapper /> */}
+              </Canvas>
+            </div>
+            <div style={{ display: 'flex', width: '50%', background: '#46B2E0' }}>
+              <h3>YZ</h3>
+              <Canvas>
+                <EditorSceneYZ selectedCube={selectedCube} />
+                {/* <OrbitControlsWrapper /> */}
+              </Canvas>
+            </div>
+          </>
+        )}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'row', height: '300px' }}>
+        {showPanel && (
+          <div style={{ display: 'flex', width: '50%', background: '#6AC47E' }}>
+            <h3>ZX</h3>
+            <Canvas>
+              <EditorSceneZX selectedCube={selectedCube} />
+              {/* <OrbitControlsWrapper /> */}
+            </Canvas>
+          </div>
+        )}
+        <div style={{ display: 'flex', width: '50%', background: '#E5D68A' }}>
+          <h3>Main</h3>
+          <Canvas onClick={handleCanvasClick}>
+            <Scene selectedCube={selectedCube} />
+            {/* <OrbitControlsWrapper /> */}
+          </Canvas>
+        </div>
+      </div>
+      {showPanel && <EditorPanel selectedCube={selectedCube} />}
+
     </div>
   );
 };
